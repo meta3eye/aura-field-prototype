@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#10231f">
-<title>오라 필드 — 첫 시제품</title>
+<title>오라 필드 — 시제품 0.3</title>
 <style>
 :root{--bg:#0d1715;--panel:#152522;--panel2:#1b302b;--ink:#f1f7f3;--muted:#a9beb5;--mint:#67e6bd;--gold:#f6cf76;--line:#2d4941;--danger:#ffc18a}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#19372e 0,#0d1715 55%);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Noto Sans KR",sans-serif}
@@ -28,15 +28,23 @@ footer{color:var(--muted);font-size:.8rem;margin:20px 3px}.hidden{display:none!i
 <body>
 <main>
   <header class="hero">
-    <div class="eyebrow">PROTOTYPE 01 · CAMERA + ENVIRONMENT</div>
+    <div class="eyebrow">PROTOTYPE 03 · VISUAL AURA EXPERIENCE</div>
     <h1>오라 필드</h1>
-    <p>사진 기반 오라 시각화와 휴대전화에서 확인 가능한 환경 정보를 한 화면에 기록하는 실험용 시제품입니다.</p>
+    <p>대상 유형에 따라 오라 표현을 바꾸고, 사진에서 계산한 참고 지표와 관찰 기록을 남기는 시제품입니다.</p>
     <span class="pill">무료 · 브라우저에서 실행 · 서버 전송 없음</span>
   </header>
 
   <div class="grid">
     <section class="card">
-      <h2>① 대상 사진</h2>
+      <h2>① 대상 선택과 사진</h2>
+      <label for="subjectType">시각화할 대상</label>
+      <select id="subjectType" style="width:100%;padding:12px;border-radius:12px;background:#0c1b17;color:var(--ink);border:1px solid var(--line);font:inherit">
+        <option value="plant">식물·나무</option>
+        <option value="animal">동물</option>
+        <option value="person">사람</option>
+        <option value="other">기타 대상</option>
+      </select>
+      <p class="muted" id="modeDescription">식물·나무를 위한 청록색과 금빛의 시각 효과입니다.</p>
       <div class="canvaswrap" id="canvaswrap">
         <div class="empty" id="empty">나무·식물·동물·사람 사진을 선택하거나 카메라로 촬영하세요.</div>
         <canvas id="view" class="hidden" aria-label="오라 시각화 사진"></canvas>
@@ -67,7 +75,30 @@ footer{color:var(--muted);font-size:.8rem;margin:20px 3px}.hidden{display:none!i
   </div>
 
   <section class="card" style="margin-top:14px">
-    <h2>③ 실제 환경 센서</h2>
+    <h2>③ 오라 색상 해석</h2>
+    <p class="muted">관찰한 색상을 직접 선택하면 아래에 색상 의미를 표시합니다. 사진에서 오라 색을 자동 검출하는 기능은 아니며, 사용자가 알려준 해석 기준을 적용한 것입니다.</p>
+    <label for="auraColor">해석할 색상 또는 조합</label>
+    <select id="auraColor" style="width:100%;padding:12px;border-radius:12px;background:#0c1b17;color:var(--ink);border:1px solid var(--line);font:inherit">
+      <option value="red">빨강</option>
+      <option value="yellow">노랑</option>
+      <option value="green">초록</option>
+      <option value="blue">파랑</option>
+      <option value="purple">보라색</option>
+      <option value="black">검은색</option>
+      <option value="white">하얀색</option>
+      <option value="orangeSacred">주황 계열: 빨강 + 하얀색</option>
+      <option value="orangePure">주황 계열: 빨강 + 노랑</option>
+    </select>
+    <label style="display:flex;gap:9px;align-items:center;color:var(--ink);margin-top:12px">
+      <input id="blackMixed" type="checkbox" style="display:inline-block;width:18px;height:18px;accent-color:var(--mint)">
+      다른 색에 검은 기운이 섞여 있다고 해석함
+    </label>
+    <div id="colorInterpretation" class="note" aria-live="polite"><b>빨강:</b> 감정 작용과 열정, 강력한 방출의 힘을 상징합니다.</div>
+    <div class="muted" style="margin-top:8px">이 해석은 사용자가 제공한 색상 체계를 반영한 것으로, 과학적으로 검증된 측정 결과나 진단이 아닙니다.</div>
+  </section>
+
+  <section class="card" style="margin-top:14px">
+    <h2>④ 실제 환경 센서</h2>
     <div class="stats">
       <div class="stat"><div class="name">주변 조도 센서</div><div class="num" id="lux">지원 확인 중</div><small id="luxDetail">브라우저·기기 지원에 따라 달라집니다.</small></div>
       <div class="stat"><div class="name">사진 평균 밝기</div><div class="num" id="cameraBrightness">—</div><small>실제 조도(lux)가 아닌 사진 픽셀값</small></div>
@@ -81,7 +112,7 @@ footer{color:var(--muted);font-size:.8rem;margin:20px 3px}.hidden{display:none!i
   </section>
 
   <section class="card" style="margin-top:14px">
-    <h2>④ 관찰 기록과 변화 그래프</h2>
+    <h2>⑤ 관찰 기록과 변화 그래프</h2>
     <div class="muted">사진을 바꿔가며 기록을 저장하세요. 기록은 현재 브라우저의 이 기기에만 저장됩니다.</div>
     <div class="chartbox"><canvas id="chart"></canvas></div>
     <div class="records" id="records"><div class="muted">아직 저장된 기록이 없습니다.</div></div>
@@ -90,7 +121,7 @@ footer{color:var(--muted);font-size:.8rem;margin:20px 3px}.hidden{display:none!i
       <button id="clear" class="warning">모든 기록 삭제</button>
     </div>
   </section>
-  <footer>오라 필드 시제품 0.1 · 사진은 서버로 전송하지 않습니다. 분석값은 실험용이며 의학·식물 진단·영적 측정에 사용하지 마세요.</footer>
+  <footer>오라 필드 시제품 0.3 · 사진은 서버로 전송하지 않습니다. 색상 해석은 운영자가 정의한 해석 체계이며, 사진 분석값은 실제 영적 에너지 측정값이 아닙니다.</footer>
 </main>
 <script>
 (() => {
@@ -98,12 +129,36 @@ const $ = id => document.getElementById(id);
 const canvas = $('view'), ctx = canvas.getContext('2d', {willReadFrequently:true});
 const chart = $('chart'), cctx = chart.getContext('2d');
 let sourceImage = null, basePixels = null, metrics = null, luxValue = null, luxSensor = null;
+let subjectType = 'plant';
+const subjectNames = {plant:'식물·나무', animal:'동물', person:'사람', other:'기타 대상'};
+const subjectDescriptions = {plant:'식물·나무를 위한 청록색과 금빛의 시각 효과입니다.', animal:'동물을 위한 푸른빛과 보랏빛의 시각 효과입니다.', person:'사람을 위한 보랏빛과 금빛의 시각 효과입니다.', other:'기타 대상을 위한 청록색 계열의 시각 효과입니다.'};
+const colorMeanings = {
+ red: {name:'빨강', text:'감정 작용과 열정, 정렬 등과 연결되는 긍정적이고 강력한 방출의 힘을 상징합니다.'},
+ yellow: {name:'노랑', text:'병아리나 어린이를 떠올리게 하는 순수함과 귀여움, 긍정적이고 순한 힘을 상징합니다.'},
+ green: {name:'초록', text:'자연과 연결되며 치유와 휴식 등 긍정적인 힐링의 힘을 상징합니다.'},
+ blue: {name:'파랑', text:'신비로움과 비밀스러움, 초월적 에너지의 힘을 상징합니다. 이 해석 체계에서는 신의 기운과 연결된 색으로 봅니다.'},
+ purple: {name:'보라색', text:'신비로움과 비밀스러움에 더해 정신에 영향을 주는 힘을 상징합니다. 이 해석 체계에서는 정신력과 초능력에 영향을 줄 수 있는 색으로 봅니다.'},
+ black: {name:'검은색', text:'부정하고 더럽고 탁한 기운, 죽음과 관련된 기운을 상징하며 귀신과 연관이 강한 색으로 해석합니다.'},
+ white: {name:'하얀색', text:'신의 기운에 속하는 색으로, 신성함 자체와 신의 기운을 머금은 상태를 상징합니다.'},
+ orangeSacred: {name:'주황 계열(빨강 + 하얀색)', text:'열정과 신성함이 결합한 의미입니다. 인간의 열정이 긍정적으로 발현되어 좋은 방향으로 이어질 가능성을 상징합니다.'},
+ orangePure: {name:'주황 계열(빨강 + 노랑)', text:'열정과 순수함이 결합한 의미입니다. 실패 가능성을 충분히 따지기 전에 겁 없이 달려드는 열정을 나타낼 수 있어 경고나 주의의 의미로 해석할 수 있습니다.'}
+};
+function updateColorInterpretation(){
+ const key=$('auraColor').value, item=colorMeanings[key], mixed=$('blackMixed').checked;
+ let text='<b>'+item.name+':</b> '+item.text;
+ if(mixed && key!=='black') text += '<br><br><b>검은 기운이 섞인 경우:</b> 기본 의미가 퇴색하고 부정적 의미가 더해진다고 해석합니다.';
+ else if(key==='black') text += '<br><br><b>주의:</b> 선택한 색상 자체가 검은색입니다.';
+ $('colorInterpretation').innerHTML=text;
+}
 let records = [];
 try { records = JSON.parse(localStorage.getItem('auraFieldRecords') || '[]'); } catch(e) { records = []; }
 
 function setText(id, value){ $(id).textContent = value; }
 function clamp(n,min,max){ return Math.max(min,Math.min(max,n)); }
 function setMeter(id,val){ $(id).style.width = clamp(val,0,100)+'%'; }
+$('auraColor').addEventListener('change',updateColorInterpretation);
+$('blackMixed').addEventListener('change',updateColorInterpretation);
+updateColorInterpretation();
 
 function analyzeImage(){
  if(!sourceImage) return;
@@ -143,14 +198,15 @@ function renderAura(){
  ctx.putImageData(basePixels,0,0);
  const intensity=Number($('aura').value)/100;
  const spread=Number($('spread').value)/100;
+ const palette = subjectType==='animal' ? {inner:'rgba(110,170,255,',middle:'rgba(95,105,255,',outer:'rgba(210,155,255,'} : subjectType==='person' ? {inner:'rgba(205,145,255,',middle:'rgba(145,100,255,',outer:'rgba(255,205,125,'} : subjectType==='other' ? {inner:'rgba(100,245,220,',middle:'rgba(50,190,175,',outer:'rgba(210,235,180,'} : {inner:'rgba(80,255,200,',middle:'rgba(30,225,175,',outer:'rgba(255,203,100,'};
  // Draw a softly layered aura around the full subject/image silhouette as an artistic overlay.
  ctx.save();
  ctx.globalCompositeOperation='screen';
  const cx=w*.5, cy=h*.52, radius=Math.max(w,h)*(.25+spread*.42);
  const grad=ctx.createRadialGradient(cx,cy,Math.min(w,h)*.08,cx,cy,radius);
- grad.addColorStop(0,'rgba(80,255,200,'+(intensity*.02)+')');
- grad.addColorStop(.35,'rgba(30,225,175,'+(intensity*.16)+')');
- grad.addColorStop(.68,'rgba(255,203,100,'+(intensity*.12)+')');
+ grad.addColorStop(0,palette.inner+(intensity*.02)+')');
+ grad.addColorStop(.35,palette.middle+(intensity*.16)+')');
+ grad.addColorStop(.68,palette.outer+(intensity*.12)+')');
  grad.addColorStop(1,'rgba(60,255,210,0)');
  ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);
  // Fine, curved light currents, intentionally decorative.
@@ -159,12 +215,17 @@ function renderAura(){
    const yy=h*(.18+k*.105);
    ctx.moveTo(-w*.05, yy);
    ctx.bezierCurveTo(w*.25,yy-h*.12,w*.58,yy+h*.12,w*1.08,yy-h*.02);
-   ctx.strokeStyle=k%2?'rgba(100,255,210,'+(intensity*.20)+')':'rgba(255,215,130,'+(intensity*.19)+')';
+   const lineA = subjectType==='animal' ? '#78b8ff' : subjectType==='person' ? '#d6a0ff' : subjectType==='other' ? '#70ead4' : '#63ffd0';
+   const lineB = subjectType==='animal' ? '#d5a0ff' : subjectType==='person' ? '#ffda86' : subjectType==='other' ? '#d6e9a4' : '#ffda86';
+   ctx.strokeStyle=k%2?lineA:lineB;
+   ctx.globalAlpha=intensity*.22;
    ctx.lineWidth=Math.max(1,Math.min(w,h)*(.0015+spread*.002));
-   ctx.shadowBlur=14*intensity;ctx.shadowColor=k%2?'#63ffd0':'#ffda86';ctx.stroke();
+   ctx.shadowBlur=14*intensity;ctx.shadowColor=k%2?lineA:lineB;ctx.stroke();
+   ctx.globalAlpha=1;
  }
  ctx.restore();
 }
+$('subjectType').addEventListener('change',()=>{subjectType=$('subjectType').value;setText('modeDescription',subjectDescriptions[subjectType]);renderAura();});
 $('aura').addEventListener('input',()=>{setText('auraVal',$('aura').value+'%');renderAura();});
 $('spread').addEventListener('input',()=>{const v=Number($('spread').value);setText('spreadVal',v<35?'좁게':v<70?'중간':'넓게');renderAura();});
 
@@ -211,7 +272,7 @@ $('manualLux').addEventListener('click',()=>{
 function persist(){try{localStorage.setItem('auraFieldRecords',JSON.stringify(records));}catch(e){alert('기기 저장 공간에 기록할 수 없습니다.');}}
 $('save').addEventListener('click',()=>{
  if(!metrics)return;
- records.unshift({date:new Date().toISOString(),index:metrics.index,green:+metrics.greenPct.toFixed(1),brightness:+metrics.brightness.toFixed(1),diversity:+metrics.diversity.toFixed(1),lux:luxValue===null?null:+luxValue.toFixed(1)});
+ records.unshift({date:new Date().toISOString(),subject:subjectType,index:metrics.index,green:+metrics.greenPct.toFixed(1),brightness:+metrics.brightness.toFixed(1),diversity:+metrics.diversity.toFixed(1),lux:luxValue===null?null:+luxValue.toFixed(1)});
  records=records.slice(0,100);persist();renderRecords();
 });
 function renderRecords(){
@@ -220,7 +281,8 @@ function renderRecords(){
  records.forEach((r,i)=>{
   const el=document.createElement('div');el.className='record';
   const date=new Date(r.date).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
-  const left=document.createElement('div');left.innerHTML='<b>'+date+' · 지수 '+r.index+'</b><small>녹색 '+r.green+'% · 밝기 '+r.brightness+(r.lux===null?'':' · 조도 '+r.lux+' lx')+'</small>';
+  const left=document.createElement('div');const typeName=subjectNames[r.subject||'plant']||'대상';
+  left.innerHTML='<b>'+typeName+' · '+date+' · 지수 '+r.index+'</b><small>녹색 '+r.green+'% · 밝기 '+r.brightness+(r.lux===null?'':' · 조도 '+r.lux+' lx')+'</small>';
   const btn=document.createElement('button');btn.textContent='삭제';btn.addEventListener('click',()=>{records.splice(i,1);persist();renderRecords();});
   el.append(left,btn);root.append(el);
  });drawChart();
@@ -240,7 +302,7 @@ function drawChart(){
 }
 $('export').addEventListener('click',()=>{
  if(!records.length){alert('내보낼 기록이 없습니다.');return;}
- const rows=[['date','visualization_index','green_percent','image_brightness_0_255','color_diversity','ambient_illuminance_lux'],...records.map(r=>[r.date,r.index,r.green,r.brightness,r.diversity,r.lux??''])];
+ const rows=[['date','subject_type','visualization_index','green_percent','image_brightness_0_255','color_diversity','ambient_illuminance_lux'],...records.map(r=>[r.date,subjectNames[r.subject||'plant']||'기타 대상',r.index,r.green,r.brightness,r.diversity,r.lux??''])];
  const csv='\uFEFF'+rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='aura-field-records.csv';a.click();URL.revokeObjectURL(url);
 });
