@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#10231f">
+<title>오라 필드 — 첫 시제품</title>
+<style>
+:root{--bg:#0d1715;--panel:#152522;--panel2:#1b302b;--ink:#f1f7f3;--muted:#a9beb5;--mint:#67e6bd;--gold:#f6cf76;--line:#2d4941;--danger:#ffc18a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#19372e 0,#0d1715 55%);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Noto Sans KR",sans-serif}
+main{max-width:900px;margin:auto;padding:20px 14px 44px}.hero{padding:16px 4px 18px}.eyebrow{color:var(--mint);font-size:.78rem;letter-spacing:.14em;font-weight:800}.hero h1{font-size:clamp(2rem,7vw,3.2rem);line-height:1.08;margin:.4rem 0}.hero p{color:var(--muted);max-width:700px;margin:.7rem 0}
+.grid{display:grid;grid-template-columns:1fr;gap:14px}@media(min-width:740px){.grid{grid-template-columns:1.1fr .9fr}}
+.card{background:linear-gradient(150deg,rgba(27,48,43,.98),rgba(17,32,29,.98));border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:0 10px 35px #0002}.card h2{font-size:1.12rem;margin:0 0 12px}.muted{color:var(--muted);font-size:.9rem}.controls{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:12px 0}
+button,.filelabel{border:0;border-radius:12px;background:var(--mint);color:#08251d;padding:11px 14px;font-weight:800;font-size:.93rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+button.secondary,.filelabel.secondary{background:#29453d;color:var(--ink);border:1px solid #3c6054}button.warning{background:#68482a;color:#fff0d4}
+input[type=file]{display:none}input[type=range]{width:100%;accent-color:var(--mint)}label{display:block;font-size:.9rem;color:var(--muted);margin:10px 0 5px}
+.canvaswrap{position:relative;overflow:hidden;border-radius:15px;background:#08100e;min-height:190px;display:grid;place-items:center}
+canvas#view{width:100%;height:auto;display:block;max-height:600px;object-fit:contain}
+.empty{padding:42px 18px;text-align:center;color:var(--muted)}.pill{display:inline-flex;border:1px solid var(--line);border-radius:99px;padding:4px 9px;color:var(--muted);font-size:.78rem}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.stat{padding:12px;background:#0c1b17;border:1px solid var(--line);border-radius:14px}.stat .num{font-size:1.7rem;font-weight:850;letter-spacing:-.04em}.stat .name{font-size:.78rem;color:var(--muted)}.stat small{display:block;color:var(--muted);font-size:.74rem}
+.meter{height:7px;border-radius:9px;background:#263e36;overflow:hidden;margin-top:7px}.meter span{display:block;height:100%;width:0;background:linear-gradient(90deg,#4fdbc0,#f5d27b);transition:width .3s}
+.chartbox{height:170px;margin-top:10px}#chart{width:100%;height:100%;display:block}
+.note{padding:12px 13px;background:#0b1b17;border-left:3px solid var(--gold);border-radius:8px;color:#d8e6df;font-size:.87rem;margin-top:12px}
+.status{font-size:.87rem;color:var(--muted);padding:8px 0}.status strong{color:var(--mint)}.records{display:grid;gap:8px;margin-top:10px}.record{display:flex;justify-content:space-between;gap:12px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 12px}.record b{font-size:.94rem}.record small{display:block;color:var(--muted)}.record button{padding:6px 9px;font-size:.78rem;background:#29453d;color:white}
+footer{color:var(--muted);font-size:.8rem;margin:20px 3px}.hidden{display:none!important}
+</style>
+</head>
+<body>
+<main>
+  <header class="hero">
+    <div class="eyebrow">PROTOTYPE 01 · CAMERA + ENVIRONMENT</div>
+    <h1>오라 필드</h1>
+    <p>사진 기반 오라 시각화와 휴대전화에서 확인 가능한 환경 정보를 한 화면에 기록하는 실험용 시제품입니다.</p>
+    <span class="pill">무료 · 브라우저에서 실행 · 서버 전송 없음</span>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <h2>① 대상 사진</h2>
+      <div class="canvaswrap" id="canvaswrap">
+        <div class="empty" id="empty">나무·식물·동물·사람 사진을 선택하거나 카메라로 촬영하세요.</div>
+        <canvas id="view" class="hidden" aria-label="오라 시각화 사진"></canvas>
+      </div>
+      <div class="controls">
+        <label class="filelabel" for="photo">사진 선택 / 촬영</label>
+        <input id="photo" type="file" accept="image/*" capture="environment">
+        <button id="demo" class="secondary">예시 사진으로 보기</button>
+        <button id="save" disabled>기록 저장</button>
+      </div>
+      <label for="aura">오라 효과 강도 <span id="auraVal">65%</span></label>
+      <input id="aura" type="range" min="0" max="100" value="65">
+      <label for="spread">오라 범위 <span id="spreadVal">중간</span></label>
+      <input id="spread" type="range" min="10" max="100" value="55">
+      <div class="muted">효과는 시각적 표현입니다. 실제 오라를 촬영하거나 검출한 결과가 아닙니다.</div>
+    </section>
+
+    <section class="card">
+      <h2>② 사진 분석 지수</h2>
+      <div class="stats">
+        <div class="stat"><div class="name">시각화 지수</div><div class="num" id="auraIndex">—</div><small>0–100 · 사진에서 계산</small><div class="meter"><span id="auraMeter"></span></div></div>
+        <div class="stat"><div class="name">녹색 계열 비율</div><div class="num" id="greenPct">—</div><small>픽셀 색상 분석</small><div class="meter"><span id="greenMeter"></span></div></div>
+        <div class="stat"><div class="name">평균 밝기</div><div class="num" id="brightness">—</div><small>0–255 · 이미지 픽셀</small><div class="meter"><span id="brightMeter"></span></div></div>
+        <div class="stat"><div class="name">색상 다양도</div><div class="num" id="diversity">—</div><small>색상 분포의 간이 지표</small><div class="meter"><span id="divMeter"></span></div></div>
+      </div>
+      <div class="note"><b>해석 주의:</b> 시각화 지수는 사진의 녹색 비율·밝기·색상 분포를 조합한 실험용 점수입니다. 생명력, 건강, 감정, 영적 에너지를 측정한 값이 아닙니다.</div>
+    </section>
+  </div>
+
+  <section class="card" style="margin-top:14px">
+    <h2>③ 실제 환경 센서</h2>
+    <div class="stats">
+      <div class="stat"><div class="name">주변 조도 센서</div><div class="num" id="lux">지원 확인 중</div><small id="luxDetail">브라우저·기기 지원에 따라 달라집니다.</small></div>
+      <div class="stat"><div class="name">사진 평균 밝기</div><div class="num" id="cameraBrightness">—</div><small>실제 조도(lux)가 아닌 사진 픽셀값</small></div>
+    </div>
+    <div class="controls">
+      <button id="sensor">조도 센서 사용 시도</button>
+      <button id="manualLux" class="secondary">조도 값 직접 입력</button>
+    </div>
+    <div class="status" id="sensorStatus">조도 센서는 일부 Android 브라우저에서만 지원될 수 있습니다. 지원되지 않아도 사진 분석 기능은 작동합니다.</div>
+    <div class="note">온도 센서는 일반 스마트폰에서 주변 공기 온도를 읽을 수 있는 표준 브라우저 기능이 거의 없습니다. 휴대전화 내부 온도는 주변 기온과 다르므로 이 시제품에서는 측정한 것처럼 표시하지 않습니다.</div>
+  </section>
+
+  <section class="card" style="margin-top:14px">
+    <h2>④ 관찰 기록과 변화 그래프</h2>
+    <div class="muted">사진을 바꿔가며 기록을 저장하세요. 기록은 현재 브라우저의 이 기기에만 저장됩니다.</div>
+    <div class="chartbox"><canvas id="chart"></canvas></div>
+    <div class="records" id="records"><div class="muted">아직 저장된 기록이 없습니다.</div></div>
+    <div class="controls">
+      <button id="export" class="secondary">기록 내보내기 (CSV)</button>
+      <button id="clear" class="warning">모든 기록 삭제</button>
+    </div>
+  </section>
+  <footer>오라 필드 시제품 0.1 · 사진은 서버로 전송하지 않습니다. 분석값은 실험용이며 의학·식물 진단·영적 측정에 사용하지 마세요.</footer>
+</main>
+<script>
+(() => {
+const $ = id => document.getElementById(id);
+const canvas = $('view'), ctx = canvas.getContext('2d', {willReadFrequently:true});
+const chart = $('chart'), cctx = chart.getContext('2d');
+let sourceImage = null, basePixels = null, metrics = null, luxValue = null, luxSensor = null;
+let records = [];
+try { records = JSON.parse(localStorage.getItem('auraFieldRecords') || '[]'); } catch(e) { records = []; }
+
+function setText(id, value){ $(id).textContent = value; }
+function clamp(n,min,max){ return Math.max(min,Math.min(max,n)); }
+function setMeter(id,val){ $(id).style.width = clamp(val,0,100)+'%'; }
+
+function analyzeImage(){
+ if(!sourceImage) return;
+ const maxSide=850, ratio=Math.min(1,maxSide/sourceImage.width,maxSide/sourceImage.height);
+ canvas.width=Math.max(1,Math.round(sourceImage.width*ratio));
+ canvas.height=Math.max(1,Math.round(sourceImage.height*ratio));
+ ctx.drawImage(sourceImage,0,0,canvas.width,canvas.height);
+ basePixels=ctx.getImageData(0,0,canvas.width,canvas.height);
+ const d=basePixels.data; let green=0, sumBright=0, sumR=0,sumG=0,sumB=0, count=0;
+ // Sample at most ~25k pixels for phone performance.
+ const step=Math.max(4,Math.floor(d.length/100000)*4);
+ let bins=new Set();
+ for(let i=0;i<d.length;i+=step){
+  const r=d[i],g=d[i+1],b=d[i+2]; if(d[i+3]<20) continue;
+  const max=Math.max(r,g,b), min=Math.min(r,g,b);
+  sumBright+=(r+g+b)/3;sumR+=r;sumG+=g;sumB+=b;count++;
+  if(g>r*1.04 && g>b*1.02 && g>45) green++;
+  bins.add((r>>5)+','+(g>>5)+','+(b>>5));
+ }
+ if(!count) return;
+ const greenPct=green/count*100, brightness=sumBright/count;
+ const diversity=clamp(bins.size/216*100,0,100);
+ // Clearly defined illustrative photo index, not a biological or energy measurement.
+ const index=Math.round(clamp(greenPct*.48 + brightness/255*25 + diversity*.27,0,100));
+ metrics={index,greenPct,brightness,diversity};
+ setText('auraIndex',index);setText('greenPct',greenPct.toFixed(1)+'%');
+ setText('brightness',brightness.toFixed(0));setText('diversity',diversity.toFixed(0)+'/100');
+ setText('cameraBrightness',brightness.toFixed(0)+'/255');
+ setMeter('auraMeter',index);setMeter('greenMeter',greenPct);setMeter('brightMeter',brightness/255*100);setMeter('divMeter',diversity);
+ $('save').disabled=false;
+ renderAura();
+}
+
+function renderAura(){
+ if(!basePixels) return;
+ const d=basePixels.data, w=canvas.width,h=canvas.height;
+ ctx.putImageData(basePixels,0,0);
+ const intensity=Number($('aura').value)/100;
+ const spread=Number($('spread').value)/100;
+ // Draw a softly layered aura around the full subject/image silhouette as an artistic overlay.
+ ctx.save();
+ ctx.globalCompositeOperation='screen';
+ const cx=w*.5, cy=h*.52, radius=Math.max(w,h)*(.25+spread*.42);
+ const grad=ctx.createRadialGradient(cx,cy,Math.min(w,h)*.08,cx,cy,radius);
+ grad.addColorStop(0,'rgba(80,255,200,'+(intensity*.02)+')');
+ grad.addColorStop(.35,'rgba(30,225,175,'+(intensity*.16)+')');
+ grad.addColorStop(.68,'rgba(255,203,100,'+(intensity*.12)+')');
+ grad.addColorStop(1,'rgba(60,255,210,0)');
+ ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);
+ // Fine, curved light currents, intentionally decorative.
+ for(let k=0;k<7;k++){
+   ctx.beginPath();
+   const yy=h*(.18+k*.105);
+   ctx.moveTo(-w*.05, yy);
+   ctx.bezierCurveTo(w*.25,yy-h*.12,w*.58,yy+h*.12,w*1.08,yy-h*.02);
+   ctx.strokeStyle=k%2?'rgba(100,255,210,'+(intensity*.20)+')':'rgba(255,215,130,'+(intensity*.19)+')';
+   ctx.lineWidth=Math.max(1,Math.min(w,h)*(.0015+spread*.002));
+   ctx.shadowBlur=14*intensity;ctx.shadowColor=k%2?'#63ffd0':'#ffda86';ctx.stroke();
+ }
+ ctx.restore();
+}
+$('aura').addEventListener('input',()=>{setText('auraVal',$('aura').value+'%');renderAura();});
+$('spread').addEventListener('input',()=>{const v=Number($('spread').value);setText('spreadVal',v<35?'좁게':v<70?'중간':'넓게');renderAura();});
+
+function loadFile(file){
+ if(!file) return;
+ if(!file.type.startsWith('image/')) { alert('이미지 파일을 선택해 주세요.'); return; }
+ const url=URL.createObjectURL(file), img=new Image();
+ img.onload=()=>{sourceImage=img;$('empty').classList.add('hidden');canvas.classList.remove('hidden');analyzeImage();URL.revokeObjectURL(url);};
+ img.onerror=()=>{alert('사진을 열 수 없습니다. 다른 사진을 선택해 주세요.');URL.revokeObjectURL(url);};
+ img.src=url;
+}
+$('photo').addEventListener('change',e=>loadFile(e.target.files[0]));
+
+$('demo').addEventListener('click',()=>{
+ // Generate an original botanical demo image locally; no network needed.
+ const tmp=document.createElement('canvas');tmp.width=640;tmp.height=480;
+ const t=tmp.getContext('2d');
+ const bg=t.createLinearGradient(0,0,0,480);bg.addColorStop(0,'#b7d9d4');bg.addColorStop(1,'#d7c69b');t.fillStyle=bg;t.fillRect(0,0,640,480);
+ t.fillStyle='#5d4531';t.beginPath();t.moveTo(288,480);t.lineTo(320,170);t.lineTo(355,480);t.fill();
+ t.strokeStyle='#5d4531';t.lineWidth=19;t.beginPath();t.moveTo(320,250);t.lineTo(215,130);t.moveTo(325,235);t.lineTo(430,125);t.moveTo(310,300);t.lineTo(180,240);t.moveTo(330,300);t.lineTo(470,235);t.stroke();
+ for(let i=0;i<120;i++){const x=100+Math.random()*440,y=30+Math.random()*300,r=10+Math.random()*23;t.fillStyle=['#315d42','#4d8150','#779451','#b4a65b'][i%4];t.globalAlpha=.65+Math.random()*.3;t.beginPath();t.ellipse(x,y,r,r*.65,Math.random(),0,Math.PI*2);t.fill();}
+ t.globalAlpha=1;
+ const im=new Image();im.onload=()=>{sourceImage=im;$('empty').classList.add('hidden');canvas.classList.remove('hidden');analyzeImage();};im.src=tmp.toDataURL();
+});
+
+$('sensor').addEventListener('click',()=>{
+ if(!('AmbientLightSensor' in window)){
+  setText('lux','미지원');setText('luxDetail','이 브라우저에서 조도 센서를 사용할 수 없습니다.');
+  setText('sensorStatus','조도 센서 API가 지원되지 않습니다. 카메라 기반 사진 밝기값은 계속 사용할 수 있습니다.');return;
+ }
+ try{
+  luxSensor=new AmbientLightSensor({frequency:1});
+  luxSensor.addEventListener('reading',()=>{luxValue=luxSensor.illuminance;setText('lux',Math.round(luxValue)+' lx');setText('luxDetail','주변 조도 센서의 실시간 값');setText('sensorStatus','조도 센서가 작동 중입니다.');});
+  luxSensor.addEventListener('error',e=>{setText('lux','오류');setText('luxDetail',e.error?.name||'센서 접근 실패');setText('sensorStatus','센서 사용이 차단되었거나 기기에서 지원하지 않습니다.');});
+  luxSensor.start();setText('lux','측정 대기');setText('sensorStatus','센서를 시작했습니다. 권한 또는 보안 연결이 필요할 수 있습니다.');
+ }catch(e){setText('lux','사용 불가');setText('luxDetail',e.message||'센서 시작 실패');}
+});
+$('manualLux').addEventListener('click',()=>{
+ const raw=prompt('별도 조도계로 측정한 조도(lux)를 입력하세요. 측정 장비가 없다면 취소하세요.');
+ if(raw===null||raw.trim()===''||!Number.isFinite(Number(raw))||Number(raw)<0){return;}
+ luxValue=Number(raw);setText('lux',Math.round(luxValue)+' lx');setText('luxDetail','사용자가 직접 입력한 값 · 센서 자동 측정 아님');setText('sensorStatus','직접 입력한 조도값을 기록에 사용할 수 있습니다.');
+});
+
+function persist(){try{localStorage.setItem('auraFieldRecords',JSON.stringify(records));}catch(e){alert('기기 저장 공간에 기록할 수 없습니다.');}}
+$('save').addEventListener('click',()=>{
+ if(!metrics)return;
+ records.unshift({date:new Date().toISOString(),index:metrics.index,green:+metrics.greenPct.toFixed(1),brightness:+metrics.brightness.toFixed(1),diversity:+metrics.diversity.toFixed(1),lux:luxValue===null?null:+luxValue.toFixed(1)});
+ records=records.slice(0,100);persist();renderRecords();
+});
+function renderRecords(){
+ const root=$('records');root.innerHTML='';
+ if(!records.length){root.innerHTML='<div class="muted">아직 저장된 기록이 없습니다.</div>';drawChart();return;}
+ records.forEach((r,i)=>{
+  const el=document.createElement('div');el.className='record';
+  const date=new Date(r.date).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  const left=document.createElement('div');left.innerHTML='<b>'+date+' · 지수 '+r.index+'</b><small>녹색 '+r.green+'% · 밝기 '+r.brightness+(r.lux===null?'':' · 조도 '+r.lux+' lx')+'</small>';
+  const btn=document.createElement('button');btn.textContent='삭제';btn.addEventListener('click',()=>{records.splice(i,1);persist();renderRecords();});
+  el.append(left,btn);root.append(el);
+ });drawChart();
+}
+function drawChart(){
+ const box=chart.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+ chart.width=Math.max(1,Math.floor(box.width*dpr));chart.height=Math.max(1,Math.floor(box.height*dpr));
+ cctx.setTransform(dpr,0,0,dpr,0,0);const w=box.width,h=box.height;
+ cctx.clearRect(0,0,w,h);cctx.font='12px system-ui';cctx.fillStyle='#a9beb5';
+ const data=records.slice(0,12).reverse();
+ if(data.length<2){cctx.fillText(data.length?'기록이 하나 있습니다. 두 개 이상 저장하면 변화선을 표시합니다.':'기록을 저장하면 변화 그래프가 표시됩니다.',8,h/2);return;}
+ const pad={l:30,r:10,t:16,b:24},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
+ for(let v=0;v<=100;v+=25){const y=pad.t+ch*(1-v/100);cctx.strokeStyle='#2d4941';cctx.beginPath();cctx.moveTo(pad.l,y);cctx.lineTo(w-pad.r,y);cctx.stroke();cctx.fillText(v,3,y+4);}
+ cctx.beginPath();data.forEach((r,i)=>{const x=pad.l+(data.length===1?0:i/(data.length-1))*cw,y=pad.t+ch*(1-r.index/100);i?cctx.lineTo(x,y):cctx.moveTo(x,y);});cctx.strokeStyle='#67e6bd';cctx.lineWidth=2.5;cctx.stroke();
+ data.forEach((r,i)=>{const x=pad.l+i/(data.length-1)*cw,y=pad.t+ch*(1-r.index/100);cctx.fillStyle='#f6cf76';cctx.beginPath();cctx.arc(x,y,3.5,0,Math.PI*2);cctx.fill();});
+ cctx.fillStyle='#a9beb5';cctx.fillText('최근 '+data.length+'개 기록 · 시각화 지수',pad.l,h-5);
+}
+$('export').addEventListener('click',()=>{
+ if(!records.length){alert('내보낼 기록이 없습니다.');return;}
+ const rows=[['date','visualization_index','green_percent','image_brightness_0_255','color_diversity','ambient_illuminance_lux'],...records.map(r=>[r.date,r.index,r.green,r.brightness,r.diversity,r.lux??''])];
+ const csv='\uFEFF'+rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+ const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='aura-field-records.csv';a.click();URL.revokeObjectURL(url);
+});
+$('clear').addEventListener('click',()=>{if(confirm('저장된 기록을 모두 삭제할까요?')){records=[];persist();renderRecords();}});
+window.addEventListener('resize',drawChart);
+renderRecords();
+if(!('AmbientLightSensor' in window)){setText('lux','미지원');setText('luxDetail','이 브라우저 또는 기기에서 센서 API를 제공하지 않습니다.');}
+})();
+</script>
+</body>
+</html>
