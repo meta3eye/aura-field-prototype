@@ -9,10 +9,10 @@
 @media(max-width:780px){.layout{grid-template-columns:1fr}.stage{min-height:240px}.panel{padding:13px}main{padding:16px 11px 32px}}
 </style></head>
 <body><main>
-<header class="top"><div><div class="eyebrow">AURA FIELD · VISUAL LAB</div><h1 class="title">오라 필드</h1><p class="sub">대상 사진에 에너지장의 빛과 흐름을 시각적으로 표현하고, 사진에서 계산한 수치를 함께 살펴봅니다.</p></div><span class="pill">시제품 1.0 · 색 조합과 탁도 조절</span></header>
+<header class="top"><div><div class="eyebrow">AURA FIELD · VISUAL LAB</div><h1 class="title">오라 필드</h1><p class="sub">인식된 대상의 윤곽을 따라 빛의 층과 흐름을 시각적으로 구성합니다. 사진 분석값과 설정값은 구분해 표시합니다.</p></div><span class="pill">시제품 1.2 · 내부 발광과 에너지 흐름</span></header>
 <div class="layout">
 <section class="panel"><h2>① 대상 사진과 오라 표현</h2><label class="upload">＋ 사진 촬영 또는 이미지 선택<input id="fileInput" type="file" accept="image/*" capture="environment"></label><p class="hint">화초·나무·동물·사람 사진을 선택하세요. 사진은 이 브라우저 안에서 처리됩니다.</p>
-<div class="stage" id="stage"><div class="empty" id="empty"><span class="symbol">✧</span><strong>대상을 담은 사진을 선택하세요</strong><p>사진 주변에 빛의 장을 생성합니다.</p></div><canvas id="photoCanvas" class="hidden"></canvas></div>
+<div class="stage" id="stage"><div class="empty" id="empty"><span class="symbol">✧</span><strong>대상을 담은 사진을 선택하세요</strong><p>대상을 인식한 뒤 윤곽을 따라 빛의 장을 생성합니다.</p></div><canvas id="photoCanvas" class="hidden"></canvas></div>
 <div class="controls"><div class="field"><label>대상 종류</label><div class="row" id="modes"><button class="choice active" data-mode="plant">🌿 식물</button><button class="choice" data-mode="animal">🐾 동물</button><button class="choice" data-mode="person">✦ 사람</button><button class="choice" data-mode="other">◇ 기타</button></div></div>
 <div class="field"><label>오라 색상 <span id="colorName">초록 · 치유와 휴식</span></label><div class="row" id="colors"><button class="choice active" data-color="#55f2a8" data-name="초록" data-meaning="자연·치유·휴식과 힐링의 힘">초록</button><button class="choice" data-color="#ff4e54" data-name="빨강" data-meaning="감정·열정·강한 방출의 힘">빨강</button><button class="choice" data-color="#ffe45c" data-name="노랑" data-meaning="순수함·귀여움·순한 긍정의 힘">노랑</button><button class="choice" data-color="#43baff" data-name="파랑" data-meaning="신비·초월적 에너지와 신의 기운">파랑</button><button class="choice" data-color="#bd7bff" data-name="보라" data-meaning="정신에 영향을 주는 신비로운 힘">보라</button><button class="choice" data-color="#ffffff" data-name="하양" data-meaning="신성함·신의 기운">하양</button><button class="choice" data-color="#ff9c45" data-name="주황" data-meaning="열정이 긍정적인 방향으로 발현되는 힘">주황</button><button class="choice" data-color="#161a25" data-name="검정" data-meaning="사용자 기준상 탁함·부정적 의미와 관련된 기운">검정</button></div></div>
 <div class="field" id="orangeOptions" style="display:none"><label for="orangeMix">주황 계열의 조합</label><select id="orangeMix" class="btn" style="width:100%;text-align:left"><option value="sacred">빨강 + 하양 · 열정과 신성함</option><option value="pure">빨강 + 노랑 · 열정과 순수함</option></select><p class="hint" id="orangeHint">열정이 신성함과 결합한 표현입니다.</p></div>
@@ -22,7 +22,7 @@
 <aside class="panel"><h2>② 사진 분석 수치</h2><p class="hint">아래 값은 사진의 픽셀을 계산한 참고 지표입니다. 영적 에너지 자체를 측정한 수치는 아닙니다.</p><div class="metric-grid"><div class="metric"><small>평균 밝기</small><strong id="brightness">—</strong><small>0–100</small><div class="meter"><span id="brightnessBar" style="width:0%"></span></div></div><div class="metric"><small>색상 선명도</small><strong id="saturation">—</strong><small>채도 추정치 · 0–100</small><div class="meter"><span id="saturationBar" style="width:0%"></span></div></div><div class="metric"><small>초록 계열 픽셀</small><strong id="green">—</strong><small>사진 전체 중 비율</small><div class="meter"><span id="greenBar" style="width:0%"></span></div></div><div class="metric"><small>색상 다양성</small><strong id="diversity">—</strong><small>색상 구간 수 · 0–100</small><div class="meter"><span id="diversityBar" style="width:0%"></span></div></div></div>
 <div class="section"><h2>사진 지표 그래프</h2><div class="chart"><div class="barrow"><span>밝기</span><div class="bar"><i id="chartBrightness" style="width:0%;background:#ffe45c"></i></div><b id="cb">0</b></div><div class="barrow"><span>채도</span><div class="bar"><i id="chartSaturation" style="width:0%;background:#bd7bff"></i></div><b id="cs">0</b></div><div class="barrow"><span>초록 비율</span><div class="bar"><i id="chartGreen" style="width:0%;background:#55f2a8"></i></div><b id="cg">0</b></div><div class="barrow"><span>색상 다양성</span><div class="bar"><i id="chartDiversity" style="width:0%;background:#43baff"></i></div><b id="cd">0</b></div></div></div>
 <div class="section"><h2>③ 색상 의미</h2><div class="interpret"><strong id="interpretTitle">초록 오라</strong><span id="interpretText">자연·치유·휴식과 힐링의 힘</span></div><p class="hint" style="margin-top:10px">색상 의미는 사용자님이 정한 해석 체계를 반영합니다. 오라 색은 현재 직접 선택하는 시각화 설정입니다.</p></div>
-<div class="notice">색 조합 및 탁도 조절판: 인식된 대상의 외곽을 따라 빛이 퍼지도록 표현합니다. 인식 결과가 정확하지 않으면 배경 일부가 포함될 수 있습니다. 실제 영적 에너지를 감지하거나 측정하는 기능은 아닙니다.</div></aside></div>
+<div class="notice">윤곽 기반 시각화: 인식 모델이 분리한 대상의 마스크 안에 발광 흐름과 빛 입자를 만들고, 바깥에는 후광과 광선을 배치합니다. 분할 오류가 있으면 빛의 형태도 달라질 수 있습니다. 실제 영적 에너지를 감지하거나 측정하는 기능은 아닙니다.</div></aside></div>
 <p class="foot">사진은 서버로 전송하지 않습니다. 이 페이지를 닫으면 현재 선택한 사진은 사라집니다. 저장 버튼은 오라 효과가 합성된 이미지를 내려받습니다.</p>
 </main><script>
 const $=id=>document.getElementById(id);const canvas=$('photoCanvas'),ctx=canvas.getContext('2d',{willReadFrequently:true});let img=null,mode='plant',auraColor='#55f2a8',colorName='초록',meaning='자연·치유·휴식과 힐링의 힘';let photoPixels=null;let lastMetrics=null;let centerX=.5,centerY=.49,dragging=false;let blackMix=0;let orangeMix='sacred';let segmentationMask=null;let segmenter=null;let detecting=false;let transformerLib=null;
@@ -45,23 +45,73 @@ if(segmentationMask){
     hc.globalCompositeOperation='destination-out';hc.drawImage(tint,0,0);hc.globalCompositeOperation='source-over';
     ctx.globalAlpha=alpha*intensity;ctx.drawImage(halo,0,0);
   });
-  // 대상 표면에는 약한 색조만 더하고, 외곽선은 마스크 모양을 그대로 따릅니다.
+  // 대상 표면에는 약한 색조를 더하고, 내부 발광·광선·윤곽 빛을 겹쳐 표현합니다.
   ctx.globalAlpha=.13*intensity;ctx.drawImage(tint,0,0);ctx.globalAlpha=1;
   ctx.save();ctx.shadowColor=renderColor;ctx.shadowBlur=Math.max(4,spread*.28);ctx.globalAlpha=.78*intensity;ctx.drawImage(tint,0,0);ctx.restore();
-  // 외곽을 따라 흐르는 작은 빛점
-  const bb=segmentationMask.bounds||{x:w*.2,y:h*.15,width:w*.6,height:h*.7};
-  for(let i=0;i<Math.round(flow*0.45);i++){
-    const a=(i/Math.max(1,Math.round(flow*.45)))*Math.PI*2;
-    const wobble=1+.08*Math.sin(a*3+i);
-    const x=bb.x+bb.width/2+Math.cos(a)*(bb.width/2+spread*.45)*wobble;
-    const y=bb.y+bb.height/2+Math.sin(a)*(bb.height/2+spread*.45)*wobble;
+  // 대상 내부에 나뭇결/생명맥처럼 보이는 가느다란 발광 흐름을 마스크 안쪽에만 그립니다.
+  const bounds=segmentationMask.bounds||{x:w*.2,y:h*.1,width:w*.6,height:h*.8};
+  ctx.save();ctx.beginPath();ctx.drawImage(segmentationMask,0,0);ctx.globalCompositeOperation='destination-in';ctx.drawImage(segmentationMask,0,0);ctx.restore();
+  ctx.save();ctx.beginPath();ctx.drawImage(segmentationMask,0,0);ctx.clip();ctx.globalCompositeOperation='screen';
+  const seed=(n)=>{const v=Math.sin(n*127.1+19.19)*43758.5453;return v-Math.floor(v)};
+  // 마스크 내부에서 빛의 실선을 만들고 부드러운 그림자 효과로 발광처럼 보이게 합니다.
+  const veinCount=Math.round(5+flow*.16);
+  for(let v=0;v<veinCount;v++){
+    const x0=bounds.x+bounds.width*(.18+seed(v+2)*.64), y0=bounds.y+bounds.height*(.18+seed(v+22)*.66);
+    ctx.beginPath();ctx.moveTo(x0,y0);
+    const drift=(seed(v+50)-.5)*bounds.width*.22;
+    ctx.bezierCurveTo(x0+drift,y0-bounds.height*.12,x0-drift*.5,y0+bounds.height*.1,x0+drift*.25,y0+bounds.height*.24);
+    ctx.strokeStyle=`rgba(${rgb.r},${rgb.g},${rgb.b},${(.18+seed(v+80)*.28)*intensity})`;
+    ctx.lineWidth=Math.max(1,shortSide*(.0012+seed(v+90)*.0015));ctx.shadowBlur=spread*.24;ctx.shadowColor=renderColor;ctx.stroke();
+  }
+  // 대상 내부에 작은 발광 입자를 분산합니다. 마스크 밖에는 그려지지 않습니다.
+  const insideCount=Math.round(35+flow*.95);
+  const maskAlpha=ctx.getImageData(0,0,w,h).data;
+  for(let i=0;i<insideCount;i++){
+    const x=bounds.x+seed(i+201)*bounds.width,y=bounds.y+seed(i+701)*bounds.height;
+    const a=maskAlpha[(Math.max(0,Math.min(h-1,Math.floor(y)))*w+Math.max(0,Math.min(w-1,Math.floor(x))))*4+3];
+    if(a<90)continue;
+    const r=Math.max(.7,shortSide*(.001+seed(i+901)*.0025));ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${rgb.r},${rgb.g},${rgb.b},${(.25+seed(i+1001)*.55)*intensity})`;ctx.shadowBlur=spread*.2;ctx.shadowColor=renderColor;ctx.fill();
+  }
+  ctx.restore();
+  // 대상 주변으로 퍼지는 가는 광선을 마스크 경계 주변에서 바깥쪽으로 뻗게 합니다.
+  const rayCount=Math.round(12+flow*.24), rayCx=bounds.x+bounds.width*.5, rayCy=bounds.y+bounds.height*.5;
+  ctx.save();ctx.globalCompositeOperation='screen';ctx.lineCap='round';
+  for(let i=0;i<rayCount;i++){
+    const a=(Math.PI*2*i/rayCount)+seed(i+1300)*.16;
+    const ex=rayCx+Math.cos(a)*(Math.max(bounds.width,bounds.height)*(.58+seed(i+1400)*.38));
+    const ey=rayCy+Math.sin(a)*(Math.max(bounds.width,bounds.height)*(.58+seed(i+1500)*.38));
+    const sx=rayCx+Math.cos(a)*Math.max(bounds.width,bounds.height)*.22, sy=rayCy+Math.sin(a)*Math.max(bounds.width,bounds.height)*.22;
+    ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(ex,ey);ctx.strokeStyle=`rgba(${rgb.r},${rgb.g},${rgb.b},${(.035+seed(i+1600)*.09)*intensity})`;ctx.lineWidth=Math.max(.6,shortSide*.0012);ctx.shadowBlur=spread*.12;ctx.shadowColor=renderColor;ctx.stroke();
+  }
+  ctx.restore();
+  // 빛점은 대상의 사각형 경계가 아니라, 분리된 마스크에서 추출한 실제 윤곽 표본을 따라 배치합니다.
+  const contour=segmentationMask.contourPoints||[];
+  const particleCount=Math.min(contour.length,Math.round(flow*.55));
+  for(let i=0;i<particleCount;i++){
+    const p=contour[Math.floor(i*contour.length/Math.max(1,particleCount))];
+    const wobble=Math.sin(i*1.73)*spread*.045;
+    const x=p.x+(p.nx||0)*spread*.18+wobble;
+    const y=p.y+(p.ny||0)*spread*.18-wobble*.5;
     const r=Math.max(1,shortSide*(.002+(i%3)*.0008));ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
     ctx.fillStyle=`rgba(${rgb.r},${rgb.g},${rgb.b},${(.3+(i%3)*.12)*intensity})`;ctx.shadowBlur=spread*.3;ctx.shadowColor=renderColor;ctx.fill();
   }
 }
 else{const rx=w*(.22+radius*.55),ry=h*(.24+radius*.55);let grad=ctx.createRadialGradient(cx,cy,Math.min(w,h)*.04,cx,cy,Math.max(rx,ry));grad.addColorStop(0,`rgba(${rgb.r},${rgb.g},${rgb.b},${.02+intensity*.09})`);grad.addColorStop(.45,`rgba(${rgb.r},${rgb.g},${rgb.b},${.18*intensity})`);grad.addColorStop(.78,`rgba(${rgb.r},${rgb.g},${rgb.b},${.10*intensity})`);grad.addColorStop(1,`rgba(${rgb.r},${rgb.g},${rgb.b},0)`);ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);for(let k=0;k<4;k++){ctx.beginPath();ctx.ellipse(cx,cy,rx*(.60+k*.14),ry*(.60+k*.14),Math.sin(k+1)*.07,0,Math.PI*2);ctx.strokeStyle=`rgba(${rgb.r},${rgb.g},${rgb.b},${(.32-k*.055)*intensity})`;ctx.lineWidth=Math.max(1,Math.min(w,h)*(.0025+k*.001));ctx.shadowBlur=18*intensity;ctx.shadowColor=renderColor;ctx.stroke()}ctx.shadowBlur=14*intensity;ctx.shadowColor=renderColor;for(let j=0;j<Math.round(flow*7);j++){const t=j/Math.max(1,Math.round(flow*7));ctx.beginPath();const start=-Math.PI*.95+t*Math.PI*.22,end=Math.PI*.82+t*Math.PI*.22;for(let q=0;q<=100;q++){const a=start+(end-start)*q/100,wobble=1+.025*Math.sin(a*5+j*1.8),x=cx+Math.cos(a)*rx*(.9+t*.27)*wobble,y=cy+Math.sin(a)*ry*(.92+t*.3)*wobble;if(q===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)}ctx.strokeStyle=`rgba(${rgb.r},${rgb.g},${rgb.b},${(.16+(1-t)*.24)*intensity})`;ctx.lineWidth=Math.max(.8,Math.min(w,h)*(.0012+(1-t)*.0018));ctx.stroke()}for(let i=0;i<Math.round(10+flow*45);i++){const ang=i*2.399,dist=.48+((i*37)%49)/100,x=cx+Math.cos(ang)*rx*dist,y=cy+Math.sin(ang)*ry*dist;ctx.beginPath();ctx.arc(x,y,Math.max(.7,Math.min(w,h)*(.0015+(i%4)*.0006)),0,Math.PI*2);ctx.fillStyle=`rgba(${rgb.r},${rgb.g},${rgb.b},${(.25+(i%3)*.16)*intensity})`;ctx.shadowBlur=8;ctx.fill()}}
 ctx.restore();$('empty').classList.add('hidden');canvas.classList.remove('hidden');$('colorName').textContent=colorName+' · '+meaning;$('interpretTitle').textContent=colorName+' 오라';$('interpretText').textContent=meaning;}
-async function detectSubject(){if(!img||detecting)return;detecting=true;$('detectBtn').disabled=true;$('detectStatus').textContent='1/3 인식 프로그램을 불러오는 중입니다…';try{if(!transformerLib){try{transformerLib=await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.2');}catch(firstErr){$('detectStatus').textContent='첫 번째 배포처에 연결하지 못해 다른 주소로 재시도합니다…';transformerLib=await import('https://unpkg.com/@huggingface/transformers@3.7.2');}}if(!segmenter){$('detectStatus').textContent='2/3 인식 모델을 준비하는 중입니다. 첫 실행은 시간이 걸릴 수 있습니다…';segmenter=await transformerLib.pipeline('image-segmentation','Xenova/segformer-b0-finetuned-ade-512-512',{dtype:'q8'});}$('detectStatus').textContent='3/3 사진을 모델 입력 형식으로 변환하고 대상을 찾는 중입니다…';const inputCanvas=document.createElement('canvas');inputCanvas.width=img.naturalWidth||img.width;inputCanvas.height=img.naturalHeight||img.height;inputCanvas.getContext('2d').drawImage(img,0,0,inputCanvas.width,inputCanvas.height);const modelInput=inputCanvas.toDataURL('image/jpeg',0.92);const results=await segmenter(modelInput);const targets={plant:['plant','tree','grass','flower','potted plant'],animal:['bird','cat','dog','horse','sheep','cow','elephant','bear','zebra','giraffe'],person:['person'],other:[]};const relevant=results.filter(r=>{const label=(r.label||'').toLowerCase();return (targets[mode]||[]).some(t=>label===t||label.includes(t))});if(!relevant.length){segmentationMask=null;$('detectStatus').textContent='선택한 종류의 대상을 뚜렷하게 찾지 못했습니다. 배경과 구분되는 사진으로 다시 시도하거나 대상 종류를 바꿔 보세요.';draw();return;}const mw=relevant[0].mask.width,mh=relevant[0].mask.height,combined=document.createElement('canvas');combined.width=mw;combined.height=mh;const cc=combined.getContext('2d'),id=cc.createImageData(mw,mh);for(const r of relevant){const m=r.mask,md=m.data;for(let i=0;i<mw*mh;i++){const v=md.length===mw*mh?md[i]:md[i*4];if(v>id.data[i*4+3]){id.data[i*4]=255;id.data[i*4+1]=255;id.data[i*4+2]=255;id.data[i*4+3]=v;}}}cc.putImageData(id,0,0);const maskCanvas=document.createElement('canvas');maskCanvas.width=canvas.width;maskCanvas.height=canvas.height;const mc=maskCanvas.getContext('2d');mc.drawImage(combined,0,0,maskCanvas.width,maskCanvas.height);const raw=mc.getImageData(0,0,maskCanvas.width,maskCanvas.height).data;let minX=maskCanvas.width,minY=maskCanvas.height,maxX=0,maxY=0;for(let y=0;y<maskCanvas.height;y+=2)for(let x=0;x<maskCanvas.width;x+=2)if(raw[(y*maskCanvas.width+x)*4+3]>90){minX=Math.min(minX,x);minY=Math.min(minY,y);maxX=Math.max(maxX,x);maxY=Math.max(maxY,y)}if(maxX<=minX||maxY<=minY){segmentationMask=null;$('detectStatus').textContent='윤곽 후보를 얻지 못했습니다. 다른 사진으로 시도해 주세요.';}else{segmentationMask=maskCanvas;segmentationMask.bounds={x:minX,y:minY,width:maxX-minX,height:maxY-minY};$('detectStatus').textContent='윤곽 후보를 찾았습니다: '+relevant.map(r=>r.label).join(', ')+'. 사진에 따라 배경이 일부 포함될 수 있습니다.';}draw()}catch(err){console.error('Aura subject segmentation error:',err);const msg=(err&&err.message)?err.message:String(err);$('detectStatus').textContent='인식 실패: '+msg.slice(0,220)+' (브라우저가 외부 모델 주소를 차단했거나 다운로드에 실패했을 수 있습니다.)'}finally{detecting=false;$('detectBtn').disabled=false}}
+async function detectSubject(){if(!img||detecting)return;detecting=true;$('detectBtn').disabled=true;$('detectStatus').textContent='1/3 인식 프로그램을 불러오는 중입니다…';try{if(!transformerLib){try{transformerLib=await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.2');}catch(firstErr){$('detectStatus').textContent='첫 번째 배포처에 연결하지 못해 다른 주소로 재시도합니다…';transformerLib=await import('https://unpkg.com/@huggingface/transformers@3.7.2');}}if(!segmenter){$('detectStatus').textContent='2/3 인식 모델을 준비하는 중입니다. 첫 실행은 시간이 걸릴 수 있습니다…';segmenter=await transformerLib.pipeline('image-segmentation','Xenova/segformer-b0-finetuned-ade-512-512',{dtype:'q8'});}$('detectStatus').textContent='3/3 사진을 모델 입력 형식으로 변환하고 대상을 찾는 중입니다…';const inputCanvas=document.createElement('canvas');inputCanvas.width=img.naturalWidth||img.width;inputCanvas.height=img.naturalHeight||img.height;inputCanvas.getContext('2d').drawImage(img,0,0,inputCanvas.width,inputCanvas.height);const modelInput=inputCanvas.toDataURL('image/jpeg',0.92);const results=await segmenter(modelInput);const targets={plant:['plant','tree','grass','flower','potted plant'],animal:['bird','cat','dog','horse','sheep','cow','elephant','bear','zebra','giraffe'],person:['person'],other:[]};const relevant=results.filter(r=>{const label=(r.label||'').toLowerCase();return (targets[mode]||[]).some(t=>label===t||label.includes(t))});if(!relevant.length){segmentationMask=null;$('detectStatus').textContent='선택한 종류의 대상을 뚜렷하게 찾지 못했습니다. 배경과 구분되는 사진으로 다시 시도하거나 대상 종류를 바꿔 보세요.';draw();return;}const mw=relevant[0].mask.width,mh=relevant[0].mask.height,combined=document.createElement('canvas');combined.width=mw;combined.height=mh;const cc=combined.getContext('2d'),id=cc.createImageData(mw,mh);for(const r of relevant){const m=r.mask,md=m.data;for(let i=0;i<mw*mh;i++){const v=md.length===mw*mh?md[i]:md[i*4];if(v>id.data[i*4+3]){id.data[i*4]=255;id.data[i*4+1]=255;id.data[i*4+2]=255;id.data[i*4+3]=v;}}}cc.putImageData(id,0,0);const maskCanvas=document.createElement('canvas');maskCanvas.width=canvas.width;maskCanvas.height=canvas.height;const mc=maskCanvas.getContext('2d');mc.drawImage(combined,0,0,maskCanvas.width,maskCanvas.height);const raw=mc.getImageData(0,0,maskCanvas.width,maskCanvas.height).data;let minX=maskCanvas.width,minY=maskCanvas.height,maxX=0,maxY=0;for(let y=0;y<maskCanvas.height;y+=2)for(let x=0;x<maskCanvas.width;x+=2)if(raw[(y*maskCanvas.width+x)*4+3]>90){minX=Math.min(minX,x);minY=Math.min(minY,y);maxX=Math.max(maxX,x);maxY=Math.max(maxY,y)}if(maxX<=minX||maxY<=minY){segmentationMask=null;$('detectStatus').textContent='윤곽 후보를 얻지 못했습니다. 다른 사진으로 시도해 주세요.';}else{
+  segmentationMask=maskCanvas;segmentationMask.bounds={x:minX,y:minY,width:maxX-minX,height:maxY-minY};
+  // 알파 마스크에서 경계 픽셀을 찾아 빛점이 실제 분할 윤곽을 따라가게 합니다.
+  const boundaryData=mc.getImageData(0,0,maskCanvas.width,maskCanvas.height).data,points=[];
+  const step=Math.max(1,Math.floor(Math.min(maskCanvas.width,maskCanvas.height)/360));
+  for(let y=1;y<maskCanvas.height-1;y+=step)for(let x=1;x<maskCanvas.width-1;x+=step){
+    const idx=(y*maskCanvas.width+x)*4;if(boundaryData[idx+3]<100)continue;
+    const left=boundaryData[(y*maskCanvas.width+x-1)*4+3],right=boundaryData[(y*maskCanvas.width+x+1)*4+3],up=boundaryData[((y-1)*maskCanvas.width+x)*4+3],down=boundaryData[((y+1)*maskCanvas.width+x)*4+3];
+    if(Math.min(left,right,up,down)<100){const nx=(left<100?-1:0)+(right<100?1:0),ny=(up<100?-1:0)+(down<100?1:0);points.push({x,y,nx:-nx,ny:-ny});}
+  }
+  segmentationMask.contourPoints=points;
+  $('detectStatus').textContent='윤곽 후보를 찾았습니다: '+relevant.map(r=>r.label).join(', ')+'. 빛점 '+points.length+'개 윤곽 표본을 사용합니다. 배경이 일부 포함될 수 있습니다.';
+}draw()}catch(err){console.error('Aura subject segmentation error:',err);const msg=(err&&err.message)?err.message:String(err);$('detectStatus').textContent='인식 실패: '+msg.slice(0,220)+' (브라우저가 외부 모델 주소를 차단했거나 다운로드에 실패했을 수 있습니다.)'}finally{detecting=false;$('detectBtn').disabled=false}}
 $('detectBtn').addEventListener('click',detectSubject);
 canvas.style.cursor='crosshair';canvas.addEventListener('pointerdown',e=>{if(!img)return;dragging=true;canvas.setPointerCapture(e.pointerId);moveAuraCenter(e)});canvas.addEventListener('pointermove',e=>{if(dragging)moveAuraCenter(e)});canvas.addEventListener('pointerup',()=>{dragging=false});canvas.addEventListener('pointercancel',()=>{dragging=false});function moveAuraCenter(e){const r=canvas.getBoundingClientRect();centerX=Math.max(.08,Math.min(.92,(e.clientX-r.left)/r.width));centerY=Math.max(.08,Math.min(.92,(e.clientY-r.top)/r.height));draw()}
 $('fileInput').addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];if(!f)return;if(!f.type.startsWith('image/')){alert('이미지 파일을 선택해 주세요.');return}const url=URL.createObjectURL(f);const newImg=new Image();newImg.onload=()=>{img=newImg;segmentationMask=null;centerX=.5;centerY=.49;analyze();draw();URL.revokeObjectURL(url)};newImg.onerror=()=>alert('이미지를 열 수 없습니다. 다른 사진을 선택해 주세요.');newImg.src=url});
